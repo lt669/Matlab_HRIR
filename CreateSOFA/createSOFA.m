@@ -8,7 +8,7 @@
 
 function[] = createSOFA(subjectNumber,fileLength)
     %% Load in HRIRs for Virtual Loudspeaker array of interest
-for h=1:2
+for h=1:1
     disp(h);
     if h==1
         sofaFileSource = 'EAD_HRIR/Audio/HRIR_Trim/';
@@ -37,7 +37,7 @@ for h=1:2
 
     for i = 1:M
         fileloadname = strcat('',sofaFileSource,'',subjectNumber,'/azi_', int2str(azimuth(i)), '_ele_', int2str(elevation(i)), '',extension);
-        hrirs(i,:,:) = audioread(fileloadname);
+        [hrirs(i,:,:),fs] = audioread(fileloadname);
     end
 
 
@@ -47,7 +47,7 @@ for h=1:2
     latency=1; % in samples, must be 1<latency<256
 
     % Data compression (0..uncompressed, 9..most compressed)
-    compression=6; % results in a nice compression within a reasonable processing time
+    compression=9; % results in a nice compression within a reasonable processing time
 
     % Get an empy conventions structure
     Obj = SOFAgetConventions('SimpleFreeFieldHRIR');
@@ -103,7 +103,7 @@ for h=1:2
     Obj.GLOBAL_AuthorContact = 'lewis.thresh@york.ac.uk';
     Obj.GLOBAL_Comment = '50 source positions. Human subject. Microphones used were sennheiser in-ear microphones via an MOTU 24IO interface (x3). Free Field and Diffuse field compensated minimum phase HRIRs.';
     Obj.GLOBAL_License = 'Distributed under Apache Licence.';
-    Obj.Data.SamplingRate = 48000;
+    Obj.Data.SamplingRate = fs;
 
 
     % save the SOFA file

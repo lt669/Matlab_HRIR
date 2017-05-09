@@ -23,7 +23,7 @@ function [ IR ] = deconvolve( inverse_filter, recording)
     IR = ifft( (fft(recording,N)).*fft(inverse_filter,N));
 
     % Normalise across all channels (REMOVED FOR MASS NORMALISATION)
-    %IR = IR/max(max(abs(IR)));
+    IR = IR/max(max(abs(IR)));
     
     % Trim the data (remove silence equal to the sweep - or filter - length)
     IR = IR( length(inverse_filter)+1:end,:);

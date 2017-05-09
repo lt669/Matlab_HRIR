@@ -23,8 +23,6 @@ disp(sprintf('length(subjectDir) = %d',length(subjectDir)));
 
 for k = 1:length(subjectDir)
 
-    disp(sprintf('\n k: %i',k));
-    
     file = sprintf('%s%s',subjectSweepsPath,subjectDir(k).name);
     [pathstr,inputName,ext] = fileparts(file);
     fileName(k) = cellstr(char(inputName));
@@ -33,27 +31,19 @@ for k = 1:length(subjectDir)
     
     % Check that the file is the correct length (144384 samples)
     len = length(sweep);
-    [r,c] = size(sweep);
-    disp(sprintf('r: %i c: %i',r,c));
-    
     if(len>144384)
         disp('Trimming');
         sweep = sweep(1:144384,:);
         disp(length(sweep))
     elseif(len<144384)
-        disp('Padding');
-        sweep = padarray(sweep,(144384-len),'post');
+        sweep = padarray(sweep,(144384-len));
     end
 
-    disp(sprintf('len: %i',len));
-    disp(sprintf('sweep(:,1): %i',length(sweep(:,1))));
-    disp(sprintf('sweep(:,2): %i',length(sweep(:,2))));
-    
     % Deconvolve
     dec(k,:,:) = deconvolve(inv,sweep);
 end
 
-% Normalise all HRIRs with respoect to each other
+% Normalise all HRIRs with respect to each other
 decNorm = normHRIR(dec);
 
 for n = 1:length(subjectDir)
@@ -61,14 +51,12 @@ for n = 1:length(subjectDir)
     % Write Raw HRIR
     outputRaw(:,:) = decNorm(n,:,:);
     name = strcat('Audio/HRIR_Raw/',subjectName,'/',char(fileName(n)),'_RawLong.wav');
-    %name = sprintf('EAD_HRIR/Audio/HRIR_Raw/%s/%s',subjectName,subjectDir(n).name);
-    audiowrite(name,outputRaw,fs);
+    audiowrite(name,outputRaw,fs,'BitsPerSample', 24);
 
     % Write Trimmed HRIR
     decStereoOut(n,:,1) = decNorm(n,2414:(2414+fileLength-1),1);
     decStereoOut(n,:,2) = decNorm(n,2414:(2414+fileLength-1),2);
     name = strcat('Audio/HRIR_Trim/',subjectName,'/',char(fileName(n)),'_Raw.wav');
-    %name = sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/%s',subjectName,subjectDir(n).name);
     output(:,:) = decStereoOut(n,:,:);
     audiowrite(name,output,fs,'BitsPerSample', 24);
 end

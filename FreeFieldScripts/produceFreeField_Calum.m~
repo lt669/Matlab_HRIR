@@ -1,5 +1,5 @@
 % Produce Free-Field EQ filters
-function [FFHRIR] = produceFreeFieldEQ(subjectName,fileLength,microphones)
+function [FFHRIR] = produceFreeFieldEQ(subjectName,fileLength,microphone)
 
 disp('--- Running Free Field Filter Script ---');
 % Variables for invFIR()
@@ -20,9 +20,15 @@ fileLengthSpeakers = 56;
 hrirPath = sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/',subjectName);
 hrirDirectory = dir(sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/*.wav',subjectName));
 
+
+
 % Loudspeakers IRs
-irPath = 'EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/';
-irDirectory = dir('EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/*.wav');
+irPath_Left = strcat('EAD_HRIR/Audio/Loudspeaker_Audio/IR_untrim/',microphone(:,1));
+irDirectory_Left = dir(strcat('EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/',microphone(:,1),'/*.wav'));
+
+irPath_Right = strcat('EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/',microphone(:,2));
+irDirectory_Right = dir(strcat('EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/',microphone(:,2),'/*.wav'));
+
 
 
 % Create output directory
@@ -40,12 +46,15 @@ disp('Loading Speaker IR Files...');
 
 % Load in audio files
 for i=1:length(irDirectory)
-    irFilePath = sprintf('%s%s',irPath,irDirectory(i).name);
+    irFilePath_Left = sprintf('%s%s',irPath_Left,irDirectory_Left(i).name);
+    irFilePath_Right = sprintf('%s%s',irPath_Right,irDirectory_Right(i).name);
     
     % Load Files
-    irFile = audioread(irFilePath);
-    irData(i,:,1) = irFile(:,1);
-    irData(i,:,2) = irFile(:,2);
+    irFile_Left = audioread(irFilePath_Left);
+    irFile_Right = audioread(irFilePath_Right);
+    
+    irData(i,:,1) = irFile_Left;
+    irData(i,:,2) = irFile_Right;
 end
 
 disp('Loading HRIR Sweep Files...');

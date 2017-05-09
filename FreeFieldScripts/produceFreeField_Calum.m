@@ -1,5 +1,5 @@
 % Produce Free-Field EQ filters
-function [FFHRIR] = produceFreeFieldEQ(subjectName,fileLength,microphones)
+function [FFHRIR] = produceFreeFieldEQ(subjectName,fileLength,microphone)
 
 disp('--- Running Free Field Filter Script ---');
 % Variables for invFIR()
@@ -17,35 +17,48 @@ fileLengthSpeakers = 56;
 % Load File Paths
 
 % HRIRs
-hrirPath = sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/',subjectName);
-hrirDirectory = dir(sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/*.wav',subjectName));
+hrirPath = sprintf('Audio/HRIR_Raw/%s/',subjectName);
+hrirDirectory = dir(sprintf('Audio/HRIR_Raw/%s/*.wav',subjectName));
+
+
 
 % Loudspeakers IRs
-irPath = 'EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/';
-irDirectory = dir('EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/*.wav');
+irPath_Left = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,1});
+irDirectory_Left = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,1},'/*.wav'));
+
+irPath_Right = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,2});
+irDirectory_Right = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,2},'/*.wav'));
+
 
 
 % Create output directory
-mkdir(sprintf('EAD_HRIR/Audio/HRIR_FFEQ/48K_24bit/%s',subjectName));
-mkdir(sprintf('EAD_HRIR/Audio/HRIR_InvFilters/48K_24bit/%s',subjectName));
+mkdir(sprintf('Audio/HRIR_FFEQ/48K_24bit/%s',subjectName));
+mkdir(sprintf('Audio/HRIR_InvFilters/48K_24bit/%s',subjectName));
 
 disp(sprintf('Creating Directory: Audio/HRIR_FFEQ/%s',subjectName));
 disp(sprintf('Creating Directory: Audio/HRIR_InvFilters/%s',subjectName));
 
 % Create arrays for IR data
-irData = zeros(length(irDirectory),fileLength,2);
-hrirData = zeros(length(hrirDirectory),fileLength,2);
+%irData = zeros(length(irDirectory_Left),fileLength,2);
+%hrirData = zeros(length(hrirDirectory),fileLength,2);
 
 disp('Loading Speaker IR Files...');
 
 % Load in audio files
-for i=1:length(irDirectory)
-    irFilePath = sprintf('%s%s',irPath,irDirectory(i).name);
+for i=1:length(irDirectory_Left)
+    irFilePath_Left = sprintf('%s/%s',irPath_Left,irDirectory_Left(i).name);
+    irFilePath_Right = sprintf('%s/%s',irPath_Right,irDirectory_Right(i).name);
+    
+    disp(irFilePath_Left );
     
     % Load Files
-    irFile = audioread(irFilePath);
-    irData(i,:,1) = irFile(:,1);
-    irData(i,:,2) = irFile(:,2);
+    irFile_Left = audioread(irFilePath_Left);
+    [r,c] = size(irFile_Left);
+    disp(sprintf('r: %i, c: %i',r,c));
+    irFile_Right = audioread(irFilePath_Right);
+    
+    irData(i,:,1) = irFile_Left;
+    irData(i,:,2) = irFile_Right;
 end
 
 disp('Loading HRIR Sweep Files...');
@@ -72,14 +85,14 @@ disp(sprintf('Saving InvFilter to: EAD_HRIR/Audio/HRIR_InvFilters/%s',subjectNam
 % Calculate and store the frequency response of each ir file
 % inverseFilters = calcInvFilter(irData); <- Old function
 
-inverseFilters = zeros(length(irDirectory),Nfft,2);
+inverseFilters = zeros(length(irDirectory_Left),Nfft,2);
 
-for k=1:length(irDirectory)
+for k=1:length(irDirectory_Left)
     invInput(:,:) = irData(k,:,:);    
     inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, Fs);
     saveFilter(:,:) = inverseFilters(k,:,:);
     
-    inverseFiltersName = strcat('EAD_HRIR/Audio/HRIR_InvFilters/48K_24bit/',subjectName,'/',char(shortName(k)),'_IF.wav');
+    inverseFiltersName = strcat('Audio/HRIR_InvFilters/48K_24bit/',subjectName,'/',char(shortName(k)),'_IF.wav');
     audiowrite(inverseFiltersName,saveFilter,Fs,'BitsPerSample', 24);
 end
 
@@ -98,6 +111,6 @@ for k=1:50
     
     %hrirEQ = 0.98* hrirEQ ./max(abs(hrirEQ (:))); % and normalise
     FFHRIR(k,:,:) = hrirEQ(:,:);
-    hrirEQName = strcat('EAD_HRIR/Audio/HRIR_FFEQ/48K_24bit/',subjectName,'/',char(shortName(k)),'_FFC.wav');
+    hrirEQName = strcat('Audio/HRIR_FFEQ/48K_24bit/',subjectName,'/',char(shortName(k)),'_FFC.wav');
     audiowrite(hrirEQName,hrirEQ,Fs,'BitsPerSample', 24);
 end
