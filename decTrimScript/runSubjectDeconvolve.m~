@@ -55,11 +55,11 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
         if(len>samples)
             disp('Trimming');
-            sweep = sweep(1:144384,:);
+            sweep = sweep(1:samples,:);
             disp(length(sweep))
         elseif(len<samples)
             disp('Padding');
-            sweep = padarray(sweep,(144384-len),'post');
+            sweep = padarray(sweep,(samples-len),'post');
         end
 
         disp(sprintf('len: %i',len));
@@ -82,11 +82,11 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
         % Write Raw HRIR
         outputRaw(:,:) = decNorm(n,:,:);
-        name = strcat('Audio/HRIR_Raw/',subjectName,'/',char(fileName(n)),'_RawLong.wav');
+        name = strcat('Audio/',projectName,'/HRIR_Raw/',subjectName,'/',char(fileName(n)),'_RawLong.wav');
         audiowrite(name,outputRaw,fs);
 
         % Write Trimmed HRIR
-        decStereoOut(n,:,1) = decNorm(n,2414:(2414+fileLength-1),1);
+        decStereoOut(n,:,1) = decNorm(n,2414:(2414+fileLength-1),1); % What number should this be for 44.1k??
         decStereoOut(n,:,2) = decNorm(n,2414:(2414+fileLength-1),2);
         name = strcat('Audio/HRIR_Trim/',subjectName,'/',char(fileName(n)),'_Raw.wav');
 
