@@ -4,14 +4,12 @@
 
     NOTE: Can not use DIR() to load audio files, must use direct file path!
 
+    This should be on the branch: new_branch
 
     NOTE: Top file should no longer be Documents/MATLAB. To avoid conflict
     with other scripts, have all required scripts in your personal top
     folder.
-
-    All audio is recorded at 48000. Change fs to output all files at the
-    desired sample rate. They will be converted at the deconvole stage
-    (after deconvolution).
+    
     
 
 %}
@@ -30,9 +28,6 @@ subjectName = 'subject_66';
 
 sofaFile = 1; 
 
-
-% HRIR_SCRIPT(projectName, subjectName, FS, bitDepth,)
-
 fileLength = 256; % This can/should be changed accordingly
 %%
 
@@ -40,7 +35,7 @@ fileLength = 256; % This can/should be changed accordingly
 monoToStereoSweeps(subjectName);
 
 % Deconvolve HRIR sweeps
-rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
+rawHRIR = runSubjectDeconvolve(subjectName,fileLength);
 
 % Apply Free Field Equalisation
 

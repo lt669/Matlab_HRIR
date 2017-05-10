@@ -28,8 +28,21 @@ for k = 1:50
     % Trim to exactly 3 seconds
     dec = dec(1:(3*fs));
     
-    mkdir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone));
+    dir_44 = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/44k_16bit/',microphone);
+    dir_48 = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/48k_16bit/',microphone);
     
-    name = sprintf('Audio/Loudspeaker_Audio/IR_untrimmed/%s/ir_%s',microphone,irDir(k).name);
-    audiowrite(name,dec,fs);
+    if ~exist(dir_44,'dir')
+        mkdir(dir_44);
+        mkdir(dir_48);
+    end
+    
+    name = sprintf('Audio/Loudspeaker_Audio/IR_untrimmed/48k_16bit/%s/ir_%s',microphone,irDir(k).name);
+    audiowrite(name,dec,48000,'BitsPerSample',16);
+    
+    dec = resample_48_44(dec);
+    
+    name = sprintf('Audio/Loudspeaker_Audio/IR_untrimmed/44k_16bit/%s/ir_%s',microphone,irDir(k).name);
+    audiowrite(name,dec,44100,'BitsPerSample',16);
+    
+    
 end
