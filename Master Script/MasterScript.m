@@ -28,7 +28,12 @@ subjectName = 'subject_66';
 % OPTIONS -- 1 = Yes -- 0 = No
 
 
-sofaFile = 1; 
+
+sofaFile = 1;
+
+% IIR Filter Options
+FilterType = 'IIR';
+Order = 24;
 
 
 % HRIR_SCRIPT(projectName, subjectName, FS, bitDepth,)
