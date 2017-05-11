@@ -6,7 +6,7 @@
 % G. Kearney, 2016.
 
 
-function[] = createSOFA(projectName,subjectNumber,fileLength,fs,bit,FIR_compression,ApplicationName,Organization,AuthorContact,Comment)
+function[] = createSOFA(projectName,subjectNumber,fileLength,fs,FIR_compression)
     
     % Variable for FS folder name as a string
     fsFolder = int2str(round(fs/1000));
@@ -16,15 +16,15 @@ for h=1:2
     if h==1
         sofaFileSource = strcat('Audio/',projectName,'/HRIR_Trim/');
         extension = '_Raw.wav';
-        sofaOutputFile = strcat('Audio/',projectName,'/SOFAFiles/SOFA_RAW/');
+        sofaOutputFile = strcat('Audio/',projectName,'/SOFAFiles/RAW/',fsFolder);
     elseif h==2
         sofaFileSource = strcat('Audio/',projectName,'/HRIR_FFEQ/');
         extension = '_FFC.wav';
-        sofaOutputFile = strcat('Audio/',projectName,'/SOFAFiles/SOFA_FFEQ/');
+        sofaOutputFile = strcat('Audio/',projectName,'/SOFAFiles/HRIR_FFEQ/',fsFolder);
     elseif h==3    
         sofaFileSource = strcat('Audio/',projectName,'/HRIR_DFFEQ/');
         extension = '_DFFC.wav';
-        sofaOutputFile =  strcat('Audio/',projectName,'/SOFAFiles/HRIR_DFFEQ/');
+        sofaOutputFile =  strcat('Audio/',projectName,'/SOFAFiles/HRIR_DFFEQ/',fsFolder);
     end
     
     % These are the co-ordinates for a 50ch Lebedev grid
@@ -99,25 +99,23 @@ for h=1:2
 
     % Fill with attributes
     Obj.GLOBAL_ListenerShortName = subjectNumber;
-    History = 'Created with a script';
+    Obj.GLOBAL_History = 'Created with a script';
     Obj.GLOBAL_DatabaseName = subjectNumber;
-    Obj.GLOBAL_ApplicationName = ApplicationName;
+    Obj.GLOBAL_ApplicationName = 'EAD Measurements';
     Obj.GLOBAL_ApplicationVersion = SOFAgetVersion('API');
-    Obj.GLOBAL_Organization = Organization;
-    Obj.GLOBAL_AuthorContact = AuthorContact;
-    Obj.GLOBAL_Comment = Comment;
+    Obj.GLOBAL_Organization = 'University of York';
+    Obj.GLOBAL_AuthorContact = 'lewis.thresh@york.ac.uk';
+    Obj.GLOBAL_Comment = '50 source positions. Human subject. Microphones used were sennheiser in-ear microphones via an MOTU 24IO interface (x3). Free Field and Diffuse field compensated minimum phase HRIRs.';
     Obj.GLOBAL_License = 'Distributed under Apache Licence.';
     Obj.Data.SamplingRate = fs;
 
 
     % save the SOFA file
-    outputDirectory = strcat('',sofaOutputFile,'/',subjectNumber,'/');
+    outputDirectory = sprintf('%s%s',sofaOutputFile,subjectNumber)
     
-    if 0==exist(outputDirectory,'file')
-        mkdir(outputDirectory);
-    end
-    
-    outfilename = strcat('',outputDirectory,'/',subjectNumber,'_',int2str(fileLength),'order_fir_',fsFolder,'k_',int2str(bit),'bit_.sofa');
+    if 0==exist(itd_out_filepath,'file')
+    mkdir(outputDirectory);
+    outfilename = sprintf('%s%s/%s.sofa',sofaOutputFile, subjectNumber,subjectNumber);
 
     disp(['Saving:  ' outfilename]);
     Obj=SOFAsave(outfilename, Obj, compression);

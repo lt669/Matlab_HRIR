@@ -51,10 +51,11 @@ function [] = FIRtoIIR(projectName,subjectName,fileLength,fs,bit,Order,compressi
         % If recorded in 48 produce 44.1k version too
         if(fs==48000)
             for j = 1:2
-                
-                h = resample(squeeze(ObjFIR.Data.IR(i,j,:)), 48000, 48000);
-                
-                %disp(sprintf('a: %d b: %d',ObjFIR.Data.IR(i,j,:),h));
+                disp('before resample');
+                disp(ObjFIR.Data.IR(i,j,:));
+                h = resample(squeeze(ObjFIR.Data.IR(i,j,:)), 44100, 48000);
+                disp('after resample');
+                disp(sprintf('a: %d b: %d',h);
                 
                 [y ym] = rceps(h);
 

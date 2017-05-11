@@ -32,9 +32,22 @@ microphones = {'Yellow','Green'};
 
 sofaFile = 1;
 
+% FIR Filter Options
+FIR_compression = 9;
+
+
+    ApplicationName = 'EAD Measurements';
+    Organization = 'University of York';
+    AuthorContact = 'lewis.thresh@york.ac.uk';
+    Comment = '50 source positions. Human subject. Microphones used were sennheiser in-ear microphones via an MOTU 24IO interface (x3). Free Field and Diffuse field compensated minimum phase HRIRs.';
+
+    
+
+
 % IIR Filter Options
 FilterType = 'IIR';
-Order = 24;
+order = 24;
+compression_IIR = 0;
 
 
 % HRIR_SCRIPT(projectName, subjectName, FS, bitDepth,)
@@ -58,5 +71,7 @@ FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microph
 ITD_Lookup_Table_Generation(projectName,subjectName,fs);
 
 %%
-createSOFA(projectName,subjectName,fileLength);
-createSOFA_IIR(projectName,subjectName,fs);
+createSOFA(projectName,subjectName,fileLength,fs,bitDepth,FIR_compression,ApplicationName,Organization,AuthorContact,Comment);
+%%
+clc;
+FIRtoIIR(projectName,subjectName,fileLength,fs,bitDepth,order,compression_IIR);
