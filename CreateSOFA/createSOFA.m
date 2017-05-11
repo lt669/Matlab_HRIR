@@ -6,7 +6,7 @@
 % G. Kearney, 2016.
 
 
-function[] = createSOFA(subjectNumber,fileLength)
+function[] = createSOFA(projectName,subjectNumber,fileLength)
     %% Load in HRIRs for Virtual Loudspeaker array of interest
 for h=1:1
     disp(h);

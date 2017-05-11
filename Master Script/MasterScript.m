@@ -50,10 +50,13 @@ rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
 %%
 % Apply Free Field Equalisation
 
-FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bits,microphones);
+FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microphones);
 
 % Apply Diffuse Field Equalisation
-
 % produceDiffuseField(subjectName,fileLength);
+%% Produce IIR Lookup Table
+ITD_Lookup_Table_Generation(projectName,subjectName,fs);
+
 %%
-createSOFA(subjectName,fileLength);
+createSOFA(projectName,subjectName,fileLength);
+createSOFA_IIR(projectName,subjectName,fs);

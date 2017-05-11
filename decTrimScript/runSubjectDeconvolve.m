@@ -5,7 +5,8 @@
 function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bits)
 
     disp('--- Running Subject Deconvolve Script ---');
-
+    
+    % Variable for FS folder name as a string
     fsFolder = int2str(round(fs/1000));
     
     % Variables
@@ -92,7 +93,17 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
             used value)
         
             This value should be better determined.
+        
+        ----------------------------------------------------------------------------
+        
+            FIND THE HRTF WITH THE SHORTEST ON SET TIME, THEN TRIM ALL
+            OTHER HRTFS RELATIVE TO THAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        
+        ----------------------------------------------------------------------------
+        
         %}
+        
+        
         
         % Write Trimmed HRIR
         decStereoOut(n,:,1) = decNorm(n,trimStart:(trimStart+fileLength-1),1); % What number should this be for 44.1k??
