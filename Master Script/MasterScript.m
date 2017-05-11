@@ -19,15 +19,16 @@ clc;
 clear;
 
 % Change for output format
-fs = 44100;
+fs = 48000;
 bitDepth = 16;
 
-projectName = 'EAD_HRIR';
-subjectName = 'subject_66';
+projectName = 'LewisTestFolder';
+subjectName = 'TestSubject';
+
+% Which microphones were used {'Left','Right'}
+microphones = {'Yellow','Green'};
 
 % OPTIONS -- 1 = Yes -- 0 = No
-
-
 
 sofaFile = 1;
 
@@ -43,13 +44,13 @@ fileLength = 256; % This can/should be changed accordingly
 
 %Convert seperatley recorded HRTFs into a stereo file
 monoToStereoSweeps(subjectName);
-
+%%
 % Deconvolve HRIR sweeps
 rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
-
+%%
 % Apply Free Field Equalisation
 
-FFHRIR = produceFreeField(subjectName,fileLength);
+FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bits,microphones);
 
 % Apply Diffuse Field Equalisation
 

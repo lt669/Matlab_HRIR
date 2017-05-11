@@ -6,17 +6,19 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
     disp('--- Running Subject Deconvolve Script ---');
 
+    fsFolder = int2str(round(fs/1000));
+    
     % Variables
-    if fs==48
+    if fsFolder=='48'
         samples = 144000;
         trimStart = 2414;
-    elseif fs==44
+    elseif fsFolder=='44'
         samples = 132300;
         trimStart = 2218;
     end
     
     % Paths to audio files
-    subjectSweepsPath = sprintf('Audio/%s/SubjectSweeps_Raw/%s/%i',projectName,subjectName,fs); % Used to load files
+    subjectSweepsPath = strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectName,'/',fsFolder); % Used to load files
     subjectDir = dir(sprintf('%s/*.wav',subjectSweepsPath)); % Used to find names of files
 
     % Check file exists
@@ -26,7 +28,7 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
     
     %Load inverse sweep
-    if fs==48
+    if fsFolder=='48'
         inv = audioread('Audio/Sweeps/InvSweep_20to22050_48000_startPad0s_endPad0s.wav');
     else
         inv = audioread('Audio/Sweeps/InvSweep_20to22050_44100_startPad0s_endPad0s.wav');
@@ -35,8 +37,8 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
     decStereoOut=zeros(50,fileLength,2);
 
     % Create output directory
-    mkdir(sprintf('Audio/%s/HRIR_Raw/%s',projectName,subjectName));
-    mkdir(sprintf('Audio/%s/HRIR_Trim/%s',projectName,subjectName));
+    mkdir(strcat('Audio/',projectName,'/HRIR_Raw/',subjectName,'/',fsFolder));
+    mkdir(strcat('Audio/',projectName,'/HRIR_Trim/',subjectName,'/',fsFolder));
 
     % Display Info
     disp(sprintf('Saving Raw HRIRs to:Audio/%s/HRIR_Raw/%s',projectName,subjectName));
@@ -58,21 +60,15 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
 
         len = length(sweep);
-        [r,c] = size(sweep);
-        disp(sprintf('r: %i c: %i',r,c));
+        [r,c] = size(sweep); % Debug Only
 
         if(len>samples)
-            disp('Trimming');
+            disp('runSubjectDeconvolve: Trimming');
             sweep = sweep(1:samples,:);
-            disp(length(sweep))
         elseif(len<samples)
-            disp('Padding');
+            disp('runSubjectDeconvolve: Padding');
             sweep = padarray(sweep,(samples-len),'post');
         end
-
-        disp(sprintf('len: %i',len));
-        disp(sprintf('sweep(:,1): %i',length(sweep(:,1))));
-        disp(sprintf('sweep(:,2): %i',length(sweep(:,2))));
 
         % Deconvolve
         dec(k,:,:) = deconvolve(inv,sweep);
@@ -85,7 +81,7 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
 
         % Write Raw HRIR
         outputRaw(:,:) = decNorm(n,:,:);
-        name = strcat('Audio/',projectName,'/HRIR_Raw/',subjectName,'/',fs,'/',char(fileName(n)),'_RawLong.wav');
+        name = strcat('Audio/',projectName,'/HRIR_Raw/',subjectName,'/',fsFolder,'/',char(fileName(n)),'_RawLong.wav');
         audiowrite(name,outputRaw,fs,'BitsPerSample', bits);
 
         %{
@@ -101,7 +97,7 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
         % Write Trimmed HRIR
         decStereoOut(n,:,1) = decNorm(n,trimStart:(trimStart+fileLength-1),1); % What number should this be for 44.1k??
         decStereoOut(n,:,2) = decNorm(n,trimStart:(trimStart+fileLength-1),2);
-        name = strcat('Audio/HRIR_Trim/',subjectName,'/',fs,'/',char(fileName(n)),'_Raw.wav');
+        name = strcat('Audio/',projectName,'/HRIR_Trim/',subjectName,'/',fsFolder,'/',char(fileName(n)),'_Raw.wav');
 
         output(:,:) = decStereoOut(n,:,:);
         audiowrite(name,output,fs,'BitsPerSample', bits);

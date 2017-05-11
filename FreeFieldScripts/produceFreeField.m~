@@ -1,5 +1,5 @@
 % Produce Free-Field EQ filters
-function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bits,microphones)
+function [FFHRIR] = produceFreeFieldEQ(subjectName,fileLength,microphones)
 
     disp('--- Running Free Field Filter Script ---');
     
@@ -19,8 +19,8 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     % ---LOAD FILE PATHS--- %
 
     % HRIRs
-    hrirPath = strcat('Audio/',projectName,'/HRIR_Trim/',subjectName,'/',fs);
-    hrirDirectory = dir(sprintf('%s/*.wav',hrirPath));
+    hrirPath = strcat('Audio/',projectName,'/HRIR_Trim/%s/',subjectName);
+    hrirDirectory = dir(sprintf('EAD_HRIR/Audio/HRIR_Trim/%s/*.wav',subjectName));
 
     % Loudspeakers IRs
     irPath = 'EAD_HRIR/Audio/Loudspeaker_Audio/IR(raw)/';
@@ -83,11 +83,11 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
 
     for k=1:length(irDirectory)
         invInput(:,:) = irData(k,:,:);    
-        inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, fs);
+        inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, Fs);
         saveFilter(:,:) = inverseFilters(k,:,:);
 
         inverseFiltersName = strcat('EAD_HRIR/Audio/HRIR_InvFilters/48K_24bit/',subjectName,'/',char(shortName(k)),'_IF.wav');
-        audiowrite(inverseFiltersName,saveFilter,fs,'BitsPerSample', bits);
+        audiowrite(inverseFiltersName,saveFilter,Fs,'BitsPerSample', 24);
     end
 
     disp('Applying Free Field Filters');
@@ -106,6 +106,6 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
         %hrirEQ = 0.98* hrirEQ ./max(abs(hrirEQ (:))); % and normalise
         FFHRIR(k,:,:) = hrirEQ(:,:);
         hrirEQName = strcat('EAD_HRIR/Audio/HRIR_FFEQ/48K_24bit/',subjectName,'/',char(shortName(k)),'_FFC.wav');
-        audiowrite(hrirEQName,hrirEQ,fs,'BitsPerSample', bits);
+        audiowrite(hrirEQName,hrirEQ,Fs,'BitsPerSample', 24);
     end
 end
