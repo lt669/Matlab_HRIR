@@ -1,5 +1,7 @@
 function [] = ITD_Lookup_Table_Generation(projectName,subjectName,fs)
-   
+    disp('');    
+    disp('---Running IDT_Lookup_Table_Generation---');
+    
     % Variable for FS folder name as a string
     fsFolder = int2str(round(fs/1000));
     
@@ -30,7 +32,7 @@ function [] = ITD_Lookup_Table_Generation(projectName,subjectName,fs)
         right = hrir(:,2);
 
         itd = finddelay(left,right,maxLag);
-        itd_out(k,3) = (itd/fs);
+        itd_out(k,3) = (itd/fs)*10^3;
 
         itd_out_filepath = strcat('Audio/',projectName,'/SOFAFiles/lookUpTables/');
         
@@ -47,6 +49,19 @@ function [] = ITD_Lookup_Table_Generation(projectName,subjectName,fs)
         fclose(fid);
         
     end
+    
+    plotOut(1) = itd_out(3,3);
+    plotOut(2) = itd_out(43,3);
+    plotOut(3) = itd_out(49,3);
+    plotOut(4) = itd_out(10,3);
+    plotOut(5) = itd_out(16,3);
+    plotOut(6) = itd_out(24,3);
+    plotOut(7) = itd_out(30,3);
+    plotOut(8) = itd_out(36,3);
+    plotOut(8) = itd_out(3,3);
+        disp('Plotting ITD...');
+        % Plot ITD
+       % plot(plotOut);
     
     function [azi,ele] = find_azi_ele(name)
         [token,remain] = strtok(name,'_');

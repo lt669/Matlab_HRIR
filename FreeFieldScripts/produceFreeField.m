@@ -59,7 +59,6 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
         irFile_Right = audioread(irFilePath_Right);
         
         [r,c] = size(irFile_Left);
-        disp(sprintf('r: %i, c: %i',r,c));
         
         irData(i,:,1) = irFile_Left;
         irData(i,:,2) = irFile_Right;
@@ -72,10 +71,8 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     for j=1:length(hrirDirectory)
 
         % Save file names
-        filePath = sprintf('%s/%s',hrirPath,hrirDirectory(j).name);
-        disp(sprintf('j=%d filePath: %s',j,filePath));
+        filePath = sprintf('%s/%s',hrirPath,hrirDirectory(j).name);        
         shortName(j) = findName(filePath);
-        disp(sprintf('shortName: %s',char(shortName(j))));
 
         % Load Files
         hrirFile = audioread(filePath);

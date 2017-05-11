@@ -1,5 +1,5 @@
 function [] = FIRtoIIR(projectName,subjectName,fileLength,fs,bit,Order,compression)
-
+    disp('---Running FIRtoIIR---');
     
     % Variable for FS folder name as a string
     fsFolder = int2str(round(fs/1000));
@@ -49,10 +49,9 @@ function [] = FIRtoIIR(projectName,subjectName,fileLength,fs,bit,Order,compressi
         ObjIIR.Data.SamplingRate = fs;
 
         % If recorded in 48 produce 44.1k version too
-        if(fs==48000)
             for j = 1:2
                 
-                h = resample(squeeze(ObjFIR.Data.IR(i,j,:)), 48000, 48000);
+                h = resample(squeeze(ObjFIR.Data.IR(i,j,:)), 44100, 48000);
                 
                 %disp(sprintf('a: %d b: %d',ObjFIR.Data.IR(i,j,:),h));
                 
@@ -68,13 +67,12 @@ function [] = FIRtoIIR(projectName,subjectName,fileLength,fs,bit,Order,compressi
             end
         end
 
-        
-    end
         outputFileName = strcat('Audio/',projectName,'/SOFAFiles/SOFA_FFEQ/',subjectName,'/',subjectName,'_',int2str(fileLength),'order_biquads_',fsFolder,'k_',int2str(bit),'_bit_.sofa');
-        
+        disp('FIRtoIIR: Saving SOFA File...');
+        disp(outputFileName);
         Obj=SOFAsave(outputFileName, ObjIIR, compression);
         %Obj=SOFAsave(strcat(subjectname,'_itd_', int2str(Order), '_order_biquads_', int2str(NewFs), '.sofa'), ObjIIR, 0);
-        
+        disp('FIRtoIIR: Saved');
 
     ObjIIR.GLOBAL_SOFAConventions = 'SimpleFreeFieldSOS';
     %fvtool(h(:,1),1,b,a)

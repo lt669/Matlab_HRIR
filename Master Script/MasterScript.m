@@ -23,7 +23,7 @@ fs = 48000;
 bitDepth = 16;
 
 projectName = 'LewisTestFolder';
-subjectName = 'TestSubject';
+subjectName = 'subject_30_copy';
 
 % Which microphones were used {'Left','Right'}
 microphones = {'Yellow','Green'};
@@ -56,22 +56,21 @@ fileLength = 256; % This can/should be changed accordingly
 %%
 
 %Convert seperatley recorded HRTFs into a stereo file
-monoToStereoSweeps(subjectName);
-%%
+%monoToStereoSweeps(subjectName);
+
 % Deconvolve HRIR sweeps
 rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
-%%
+
 % Apply Free Field Equalisation
 
 FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microphones);
 
 % Apply Diffuse Field Equalisation
 % produceDiffuseField(subjectName,fileLength);
-%% Produce IIR Lookup Table
+
+% Produce IIR Lookup Table
 ITD_Lookup_Table_Generation(projectName,subjectName,fs);
 
-%%
+
 createSOFA(projectName,subjectName,fileLength,fs,bitDepth,FIR_compression,ApplicationName,Organization,AuthorContact,Comment);
-%%
-clc;
 FIRtoIIR(projectName,subjectName,fileLength,fs,bitDepth,order,compression_IIR);
