@@ -1,6 +1,6 @@
 %This code was not produced by the author of this dissertation, but taken
 %from the departmental website from the University of York
-function [ sweep, inverse_filter ] = generatesweep( freq_lower, freq_upper, duration, Fs,  padlength, nowav)
+function [ sweep, inverse_filter ] = generatesweep(path, freq_lower, freq_upper, duration, Fs,  padlength, nowav)
 %GENERATESWEEP Generates a logarithmic sine sweep and a corresponding
 %inverse filter for deconvolution.
 
@@ -45,8 +45,8 @@ function [ sweep, inverse_filter ] = generatesweep( freq_lower, freq_upper, dura
     
     % Unless we specified otherwise, export the sweep as a wav
     if ~exist('nowav', 'var')
-        audiowrite(['Sweep_',num2str(freq_lower),'to',num2str(freq_upper),'_',num2str(Fs),'_pad',num2str(padlength),'s.wav'], sweep, Fs, 'BitsPerSample' , 24);
-        audiowrite(['InvSweep_',num2str(freq_lower),'to',num2str(freq_upper),'_',num2str(Fs),'_pad',num2str(padlength),'s.wav'], inverse_filter, Fs, 'BitsPerSample' , 24);
+        audiowrite(strcat('',path,'/Sweep_',num2str(freq_lower),'to',num2str(freq_upper),'_',num2str(Fs),'_pad',num2str(padlength),'s.wav'), sweep, Fs, 'BitsPerSample' , 24);
+        audiowrite(strcat('',path,'/InvSweep_',num2str(freq_lower),'to',num2str(freq_upper),'_',num2str(Fs),'_pad',num2str(padlength),'s.wav'), inverse_filter, Fs, 'BitsPerSample' , 24);
     end
     
 end

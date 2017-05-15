@@ -30,9 +30,9 @@ function [decStereoOut] = runSubjectDeconvolve(projectName,subjectName,fileLengt
     
     %Load inverse sweep
     if fsFolder=='48'
-        inv = audioread('Audio/Sweeps/InvSweep_20to22050_48000_startPad0s_endPad0s.wav');
+        inv = audioread('Audio/Sweeps/InvSweep_20to22050_48000_Pad0s.wav');
     else
-        inv = audioread('Audio/Sweeps/InvSweep_20to22050_44100_startPad0s_endPad0s.wav');
+        inv = audioread('Audio/Sweeps/InvSweep_20to22050_44100_Pad0s.wav');
     end
 
     decStereoOut=zeros(50,fileLength,2);
