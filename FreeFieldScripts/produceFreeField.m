@@ -25,11 +25,14 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     hrirDirectory = dir(sprintf('%s/*.wav',hrirPath));
 
     % Loudspeakers IRs
-    irPath_Left = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,1});
-    irDirectory_Left = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,1},'/*.wav'));
+    irPath_Left = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',fsFolder,'k_',int2str(bits),'bit/',microphone{:,1});
+    irDirectory_Left = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',fsFolder,'k_',int2str(bits),'bit/',microphone{:,1},'/*.wav'));
 
-    irPath_Right = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,2});
-    irDirectory_Right = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphone{:,2},'/*.wav'));
+    disp('...........');
+    disp(length(irDirectory_Left));
+    
+    irPath_Right = strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',fsFolder,'k_',int2str(bits),'bit/',microphone{:,2});
+    irDirectory_Right = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',fsFolder,'k_',int2str(bits),'bit/',microphone{:,2},'/*.wav'));
 
     % --------------------- %
     

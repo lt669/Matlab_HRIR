@@ -22,8 +22,8 @@ clear;
 fs = 48000;
 bitDepth = 16;
 
-projectName = 'LewisTestFolder';
-subjectName = 'subject_30_copy';
+projectName = 'KemarTest';
+subjectName = 'Kemar';
 
 % Which microphones were used {'Left','Right'}
 microphones = {'Yellow','Green'};
@@ -62,7 +62,7 @@ fileLength = 256; % This can/should be changed accordingly
 rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
 
 % Apply Free Field Equalisation
-
+%%
 FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microphones);
 
 % Apply Diffuse Field Equalisation
