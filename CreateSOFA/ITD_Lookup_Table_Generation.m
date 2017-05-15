@@ -45,7 +45,7 @@ function [] = ITD_Lookup_Table_Generation(projectName,subjectName,fs)
         idt_out_name = strcat(itd_out_filepath,'/',subjectName,'_ITD_Lookup_Table.txt');
 
         fid = fopen(idt_out_name,'w');
-        fprintf(fid,'%0i \t %0i \t %0i\r\n',itd_out');
+        fprintf(fid,'%0i \t %0i \t %0f\r\n',itd_out');
         fclose(fid);
         
     end

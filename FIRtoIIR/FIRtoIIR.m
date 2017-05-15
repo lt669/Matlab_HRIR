@@ -16,15 +16,21 @@ function [] = FIRtoIIR(projectName,subjectName,fileLength,fs,bit,Order,compressi
     % Read IDT Lookup Table
     disp(strcat('Audio/',projectName,'/SOFAFiles/lookUpTables/',subjectName,'_ITD_Lookup_Table.txt'));
     fid = fopen(strcat('Audio/LewisTestFolder/SOFAFiles/lookUpTables/TestSubject_ITD_Lookup_Table.txt'),'r');
-    S = textscan(fid,'%d%d%d');
+    S = textscan(fid,'%d%d%f');
     fclose(fid);
 
     Az = S(:,1);
     El = S(:,2);
     ITD = S(:,3);
+    disp(ITD)
     Az = cell2mat(Az);
     El = cell2mat(El);
     ITD = cell2mat(ITD);
+    
+    for k = 1:length(Az)
+        disp(sprintf('Az(%i): El(%i): ITD(%f): ',Az(k),El(k),ITD(k)));
+    end
+        
 
     %El = El+90; % Offset elevation so it's in same format as SOFA
 
