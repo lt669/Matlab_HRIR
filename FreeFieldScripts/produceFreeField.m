@@ -36,10 +36,10 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
 
     % Create output directory
     mkdir(strcat('Audio/',projectName,'/HRIR_FFEQ/',subjectName,'/',fsFolder));
-    mkdir(strcat('Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder));
+    mkdir(strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder));
 
     disp(strcat('Creating Directory: Audio/',projectName,'/HRIR_FFEQ/',subjectName,'/',fsFolder));
-    disp(strcat('Creating Directory: Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder));
+    disp(strcat('Creating Directory: Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder));
 
     
     % Create arrays for IR data
@@ -82,7 +82,7 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     end
 
     disp('Calculating Inverse Filters...');
-    disp(strcat('Saving InvFilter to: Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder));
+    disp(strcat('Saving InvFilter to: Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder));
 
     % Calculate and store the frequency response of each ir file
     % inverseFilters = calcInvFilter(irData); <- Old function
@@ -94,7 +94,7 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
         inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, fs);
         saveFilter(:,:) = inverseFilters(k,:,:);
 
-        inverseFiltersName = strcat('Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder,'/',char(shortName(k)),'_IF.wav');
+        inverseFiltersName = strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder,'/',char(shortName(k)),'_IF.wav');
         audiowrite(inverseFiltersName,saveFilter,fs,'BitsPerSample', bits);
     end
 

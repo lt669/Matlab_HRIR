@@ -33,10 +33,10 @@ irDirectory_Right = dir(strcat('Audio/Loudspeaker_Audio/IR_untrimmed/',microphon
 
 % Create output directory
 mkdir(sprintf('Audio/HRIR_FFEQ/48K_24bit/%s',subjectName));
-mkdir(sprintf('Audio/HRIR_InvFilters/48K_24bit/%s',subjectName));
+mkdir(sprintf('Audio/SpeakerIR_InvFilters/48K_24bit/%s',subjectName));
 
 disp(sprintf('Creating Directory: Audio/HRIR_FFEQ/%s',subjectName));
-disp(sprintf('Creating Directory: Audio/HRIR_InvFilters/%s',subjectName));
+disp(sprintf('Creating Directory: Audio/SpeakerIR_InvFilters/%s',subjectName));
 
 % Create arrays for IR data
 %irData = zeros(length(irDirectory_Left),fileLength,2);
@@ -80,7 +80,7 @@ for j=1:length(hrirDirectory)
 end
 
 disp('Calculating Inverse Filters...');
-disp(sprintf('Saving InvFilter to: EAD_HRIR/Audio/HRIR_InvFilters/%s',subjectName));
+disp(sprintf('Saving InvFilter to: EAD_HRIR/Audio/SpeakerIR_InvFilters/%s',subjectName));
 
 % Calculate and store the frequency response of each ir file
 % inverseFilters = calcInvFilter(irData); <- Old function
@@ -92,7 +92,7 @@ for k=1:length(irDirectory_Left)
     inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, Fs);
     saveFilter(:,:) = inverseFilters(k,:,:);
     
-    inverseFiltersName = strcat('Audio/HRIR_InvFilters/48K_24bit/',subjectName,'/',char(shortName(k)),'_IF.wav');
+    inverseFiltersName = strcat('Audio/SpeakerIR_InvFilters/48K_24bit/',subjectName,'/',char(shortName(k)),'_IF.wav');
     audiowrite(inverseFiltersName,saveFilter,Fs,'BitsPerSample', 24);
 end
 

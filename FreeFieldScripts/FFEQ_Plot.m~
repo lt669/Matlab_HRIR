@@ -44,10 +44,9 @@ dffc_path = sprintf('EAD_HRIR/Audio/HRIR_DFFEQ/48K_24bit/%s/',subjectName);
 dffc_hrir = dir(sprintf('EAD_HRIR/Audio/HRIR_DFFEQ/48K_24bit/%s/*.wav',subjectName));
 %}
 
-% FF Inverse Filters (THOUGH IN THE SpeakerIR_InvFilters FOLDER, THEY ARE
-% ACTUALY THE LOUTSPEAKER INVERSE IR FILES, NOT OF ACTUALLY HRIRS!)
-ffInv_path = strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder);
-ffInv_hrir = dir(strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder,'/*.wav'));
+% FF Inverse Filters
+ffInv_path = strcat('Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder);
+ffInv_hrir = dir(strcat('Audio/',projectName,'/HRIR_InvFilters/',subjectName,'/',fsFolder,'/*.wav'));
 
 user_in = 3;
 while user_in ~= 0
