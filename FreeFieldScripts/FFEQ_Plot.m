@@ -34,20 +34,8 @@ speaker_hrir_right = dir(strcat(speaker_path_right,'/*.wav'));
 ff_path = strcat('Audio/',projectName,'/HRIR_FFEQ/',subjectName,'/',fsFolder);
 ff_hrir = dir(strcat('Audio/',projectName,'/HRIR_FFEQ/',subjectName,'/',fsFolder,'/*.wav'));
 
-% DFC HRIR
-%{
-dfc_path = sprintf('EAD_HRIR/Audio/HRIR_DFC/48K_24bit/%s/',subjectName);
-dfc_hrir = dir(sprintf('EAD_HRIR/Audio/HRIR_DFC/48K_24bit/%s/*.wav',subjectName));
-
-% DFFC HRIR
-dffc_path = sprintf('EAD_HRIR/Audio/HRIR_DFFEQ/48K_24bit/%s/',subjectName);
-dffc_hrir = dir(sprintf('EAD_HRIR/Audio/HRIR_DFFEQ/48K_24bit/%s/*.wav',subjectName));
-%}
-
-% FF Inverse Filters (THOUGH IN THE SpeakerIR_InvFilters FOLDER, THEY ARE
-% ACTUALY THE LOUTSPEAKER INVERSE IR FILES, NOT OF ACTUALLY HRIRS!)
 ffInv_path = strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder);
-ffInv_hrir = dir(strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder,'/*.wav'));
+ffSpeakerInv_hrir = dir(strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder,'/*.wav'));
 
 user_in = 3;
 while user_in ~= 0
@@ -67,19 +55,19 @@ while user_in ~= 0
     speaker_File_Right = sprintf('%s/%s',speaker_path_right,speaker_hrir_right(user_in).name);
     
     ff_HRIR_File = sprintf('%s/%s',ff_path,ff_hrir(user_in).name);
-    ffInv_File = sprintf('%s/%s',ffInv_path,ffInv_hrir(user_in).name);
+    ffSpeakerInv_File = sprintf('%s/%s',ffInv_path,ffSpeakerInv_hrir(user_in).name);
     
     raw_HRIR = audioread(raw_HRIR_File);
     speaker_left = audioread(speaker_File_Left);
     speaker_right = audioread(speaker_File_Right);
     ff_HRIR = audioread(ff_HRIR_File);
-    ffInv = audioread(ffInv_File);
+    ffSpeakerInv = audioread(ffSpeakerInv_File);
     
     
   
     % Applied Free Field EQ
-    speakerResp(:,1) = conv(speaker_left,ffInv(:,1));
-    speakerResp(:,2) = conv(speaker_right,ffInv(:,2));
+    ffEQ_speakerResp(:,1) = conv(speaker_left,ffSpeakerInv(:,1));
+    ffEQ_speakerResp(:,2) = conv(speaker_right,ffSpeakerInv(:,2));
 
     if plotView == 1
         row = 2;
@@ -91,11 +79,11 @@ while user_in ~= 0
         hold on;
         GK_Freqplot(speaker_left,Fs, Nfft, 'k', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
         GK_Freqplot(speaker_right,Fs, Nfft, 'k:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
-        GK_Freqplot(ffInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(ffInv(:,2),Fs, Nfft, 'g:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(speakerResp(:,1),Fs, Nfft, 'r', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
-        GK_Freqplot(speakerResp(:,2),Fs, Nfft, 'r:', 3, 16, 'Free Field Inverse Filter', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
-        legend('Speaker (L)', 'Speaker (R)','invFF (L)', 'invFF (R)','speakerEQ (L)','speakerEQ (R)','location', 'southeast');
+        GK_Freqplot(ffSpeakerInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        GK_Freqplot(ffSpeakerInv(:,2),Fs, Nfft, 'g:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        GK_Freqplot(ffEQ_speakerResp(:,1),Fs, Nfft, 'r', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
+        GK_Freqplot(ffEQ_speakerResp(:,2),Fs, Nfft, 'r:', 3, 16, 'Free Field Inverse Filter', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
+        legend('Speaker (L)', 'Speaker (R)','invSpeakerFF (L)', 'invSpeakerFF (R)','speakerEQ (L)','speakerEQ (R)','location', 'southeast');
  
         % Raw, Inv filter and FF eq
         subplot(row,col,2);
@@ -104,9 +92,9 @@ while user_in ~= 0
         GK_Freqplot(raw_HRIR(:,2),Fs, Nfft, 'k:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
         GK_Freqplot(ff_HRIR(:,1),Fs, Nfft, 'r', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
         GK_Freqplot(ff_HRIR(:,2),Fs, Nfft, 'r:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(ffInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(ffInv(:,2),Fs, Nfft, 'g:', 3, 16, 'Raw, FF Inverse and FF EQ', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        legend('Raw (L)', 'Raw (R)','FF (L)', 'FF (R)','ffInv (L)','ffInv (R)','location', 'southeast');
+        GK_Freqplot(ffSpeakerInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        GK_Freqplot(ffSpeakerInv(:,2),Fs, Nfft, 'g:', 3, 16, 'Raw, FF Inverse and FF EQ', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        legend('Raw HRIR(L)', 'Raw HRIR(R)','FF HRIR(L)', 'FF HRIR(R)','ffInvSpeaker (L)','ffInvSpeaker (R)','location', 'southeast');
 
     elseif plotView ==2 
         row = 3;
@@ -140,10 +128,10 @@ while user_in ~= 0
         hold on;
         GK_Freqplot(speaker(:,1),Fs, Nfft, 'k', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
         GK_Freqplot(speaker(:,2),Fs, Nfft, 'k:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
-        GK_Freqplot(ffInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(ffInv(:,2),Fs, Nfft, 'g:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
-        GK_Freqplot(speakerResp(:,1),Fs, Nfft, 'r', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
-        GK_Freqplot(speakerResp(:,2),Fs, Nfft, 'r:', 3, 16, 'Free Field Inverse Filter', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
+        GK_Freqplot(ffSpeakerInv(:,1),Fs, Nfft, 'g', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        GK_Freqplot(ffSpeakerInv(:,2),Fs, Nfft, 'g:', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);
+        GK_Freqplot(ffEQ_speakerResp(:,1),Fs, Nfft, 'r', 3, 16, '', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
+        GK_Freqplot(ffEQ_speakerResp(:,2),Fs, Nfft, 'r:', 3, 16, 'Free Field Inverse Filter', 'Frequency', 'Amplitude', range, [70 20000],  isNorm, 0);    
         legend('Speaker (L)', 'Speaker (R)','invFF (L)', 'invFF (R)','speakerEQ (L)','speakerEQ (R)','location', 'southeast');
 
     end

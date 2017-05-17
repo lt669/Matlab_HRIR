@@ -11,7 +11,6 @@ function [normalised] = normHRIR(input)
     % Find maximum value
     maximum = max(max(max(abs(input))));
     
-    % Apply Normalisation
     normalised = input/maximum;
     
     [n,m,p] = size(normalised);

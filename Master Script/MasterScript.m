@@ -28,6 +28,15 @@ subjectName = 'Kemar';
 % Which microphones were used {'Left','Right'}
 microphones = {'Yellow','Green'};
 
+% FFEQ Variables
+type = 'minphase'; % Minimum Phase response
+Nfft = 4096;
+Noct = 0; % Octave band smoothing (0 = off, 1 = Octave, 2 = 1/2 Octave etc)
+range = [400 20000]; % Range for inversion
+reg = [30 50]; % In band and out of band regularisation parameters (dB)
+
+
+
 % OPTIONS -- 1 = Yes -- 0 = No
 
 sofaFile = 1;
@@ -53,7 +62,7 @@ compression_IIR = 0;
 % HRIR_SCRIPT(projectName, subjectName, FS, bitDepth,)
 
 fileLength = 256; % This can/should be changed accordingly
-%%
+
 
 %Convert seperatley recorded HRTFs into a stereo file
 %monoToStereoSweeps(subjectName);
@@ -63,7 +72,7 @@ rawHRIR = runSubjectDeconvolve(projectName,subjectName,fileLength,fs,bitDepth);
 
 % Apply Free Field Equalisation
 %%
-FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microphones);
+FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microphones,type,Nfft,Noct,range,reg);
 
 % Apply Diffuse Field Equalisation
 % produceDiffuseField(subjectName,fileLength);

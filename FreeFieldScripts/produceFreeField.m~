@@ -83,7 +83,7 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     for k=1:length(irDirectory_Left)
         invInput(:,:) = irData(k,:,:);    
         inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, fs);
-        inverseFilters_Norm(k,:,:) = inverseFilters(k,:,:)/max(max(inverseFilters(k,:,:)));
+        inverseFilters_Norm(k,:,:) = inverseFilters(k,:,:)/max(inverseFilters(k,:,:));
     end
     
     
@@ -135,9 +135,14 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     % ------------ Normalise the FFEQ'ed HRIRs------------ %
     FFHRIR_Norm = normHRIR(FFHRIR);
     
+    disp('FFHRIR_Norm (1)... ');
+    disp(max(FFHRIR_Norm (1,:,:)));
+    
+    disp('FFHRIR(1)... ');
+    disp(max(FFHRIR(1,:,:)));
+    
     % ------------ Save the Normalised FFEQ'ed HRIRs------------ %
     for k=1:50
-        hrirEQ(:,:) = FFHRIR_Norm(k,:,:);
         hrirEQName = strcat('Audio/',projectName,'/HRIR_FFEQ/',subjectName,'/',fsFolder,'/',char(shortName(k)),'_FFC.wav');
         audiowrite(hrirEQName,hrirEQ,fs,'BitsPerSample', bits);
     end
