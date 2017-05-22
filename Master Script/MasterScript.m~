@@ -33,7 +33,7 @@ type = 'minphase'; % Minimum Phase response
 Nfft = 4096;
 Noct = 0; % Octave band smoothing (0 = off, 1 = Octave, 2 = 1/2 Octave etc)
 range = [100 20000]; % Range for inversion
-reg = [20 10]; % In band and out of band regularisation parameters (dB)
+reg = [15 10]; % In band and out of band regularisation parameters (dB)
 
 
 
@@ -75,7 +75,7 @@ FFHRIR = produceFreeField(projectName,subjectName,fileLength,fs,bitDepth,microph
 
 % Apply Diffuse Field Equalisation
 % produceDiffuseField(subjectName,fileLength);
-%%
+
 % Produce IIR Lookup Table
 ITD_Lookup_Table_Generation(projectName,subjectName,fs);
 

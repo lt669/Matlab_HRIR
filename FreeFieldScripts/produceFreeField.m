@@ -77,36 +77,13 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
 
     inverseFilters = zeros(length(irDirectory_Left),Nfft,2);
     
-    % ------------ Calculate the inverse Filters ------------ %
+    % ------------ Calculate & Save the inverse Filters ------------ %
     
-    disp('Producing Inverse Filters');
+    disp('Producing & Saving Inverse Filters');
     for k=1:length(irDirectory_Left)
         invInput(:,:) = irData(k,:,:);    
         inverseFilters(k,:,:) = invFIR(type,invInput,Nfft,Noct,Nfft,range,reg,1, fs);
-        inverseFilters_Norm(k,:,:) = inverseFilters(k,:,:)/max(max(inverseFilters(k,:,:)));
-    end
-    
-    
-    %{
-    % ------------ Normalise the inverse Filters ------------ %
-    
-    disp('Normalising Inverse Filters');
-    inverseFilters_Norm = normHRIR(inverseFilters);  
-    
-    
-    disp('inverseFilters(1)... ');
-    disp(max(inverseFilters(1,:,:)));
-    
-    disp('inverseFilters_Norm(1)... ');
-    disp(max(inverseFilters_Norm(1,:,:)));
-    %}
-    
-    
-    % ------------ Save the inverse Filters ------------ %
-    
-    disp('Saving Normalised Inverse Filters');
-    for k=1:length(50)
-        saveFilter(:,:) = inverseFilters_Norm(k,:,:);
+        saveFilter(:,:) = inverseFilters(k,:,:);
         inverseFiltersName = strcat('Audio/',projectName,'/SpeakerIR_InvFilters/',subjectName,'/',fsFolder,'/',char(shortName(k)),'_IF.wav');
         audiowrite(inverseFiltersName,saveFilter,fs,'BitsPerSample', bits);
     end
