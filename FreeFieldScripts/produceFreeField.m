@@ -5,6 +5,17 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
     
     % Variable for FS folder name as a string
     fsFolder = int2str(round(fs/1000));
+    
+    % Variables
+    if fsFolder=='48'
+        samples = 144000;
+        trimStart = 2414;
+    elseif fsFolder=='44'
+        samples = 132300;
+        trimStart = 2218;
+    end
+    
+    
 
     % ---LOAD FILE PATHS--- %
 
@@ -31,7 +42,7 @@ function [FFHRIR] = produceFreeFieldEQ(projectName,subjectName,fileLength,fs,bit
 
     
     % Create arrays for IR data
-    irData = zeros(length(irDirectory_Left),144000,2);
+    irData = zeros(length(irDirectory_Left),samples,2);
     hrirData = zeros(length(hrirDirectory),fileLength,2);
 
     disp('Loading Speaker IR Files...');
