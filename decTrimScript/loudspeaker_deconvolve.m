@@ -14,7 +14,7 @@ irPath = strcat('Audio/Loudspeaker_Audio/Sweeps/',microphone);
 irDir = dir(strcat('Audio/Loudspeaker_Audio/Sweeps/',microphone,'/*.wav'));
 
 %Load inverse sweep
-inv = audioread('Audio/Sweeps/InvSweep_20to22050_48000_startPad0s_endPad0s.wav');
+inv = audioread('Audio/Sweeps/InvSweep_20to22050_48000_pad0s.wav');
 
 for k = 1:50
     
