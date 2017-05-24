@@ -1,10 +1,29 @@
-function [] = monoToStereoSweeps(subjectNumber)
+function [] = monoToStereoSweeps(projectName,subjectNumber,fs)
 
-    monoLeftFile = strcat('EAD_HRIR/Audio/SubjectSweeps_Raw/',subjectNumber,'/Left/');
-    monoLeftdir = dir(strcat('EAD_HRIR/Audio/SubjectSweeps_Raw/',subjectNumber,'/Left/*.wav'));
-
-    monoRightFile = strcat('EAD_HRIR/Audio/SubjectSweeps_Raw/',subjectNumber,'/Right/');
-    monoRightdir = dir(strcat('EAD_HRIR/Audio/SubjectSweeps_Raw/',subjectNumber,'/Right/*.wav'));
+    fsFolder = int2str(round(fs/1000));
+    
+    % Variables
+    if fsFolder=='48'
+        samples = 144000;
+        trimStart = 2414;
+    elseif fsFolder=='44'
+        samples = 132300;
+        trimStart = 2218;
+    end
+    
+    
+    
+    monoLeftFile = strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectNumber,'/',fsFolder,'/Left/');
+    
+    % Check file exists
+    if 0==exist(monoLeftFile ,'file')
+        error(sprintf('The Folder... \n\n %s \n\n ...does not exists. Did you move the sweeps into seperate Left and Right folders? Or did you actually record the sweeps in stereo?',monoLeftFile));
+    end
+    
+    monoLeftdir = dir(strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectNumber,'/',fsFolder,'/Left/*.wav'));
+    
+    monoRightFile = strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectNumber,'/',fsFolder,'/Right/');
+    monoRightdir = dir(strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectNumber,'/',fsFolder,'/Right/*.wav'));
 
     for k=1:50
         disp(k);
@@ -13,30 +32,27 @@ function [] = monoToStereoSweeps(subjectNumber)
 
         % Check that the file is the correct length (144384 samples)
         len = length(monoLeft);
-        if(len>144384)
+        if(len>samples)
             disp('Trimming');
-            monoLeft = monoLeft(1:144384,:);
+            monoLeft = monoLeft(1:samples,:);
             disp(length(monoLeft))
-        elseif(len<144384)
-            monoLeft = padarray(monoLeft,(144384-len));
+        elseif(len<samples)
+            monoLeft = padarray(monoLeft,(samples-len));
         end
         
         len = length(monoRight);
-        if(len>144384)
+        if(len>samples)
             disp('Trimming');
-            monoRight = monoRight(1:144384,:);
+            monoRight = monoRight(1:samples,:);
             disp(length(monoRight))
-        elseif(len<144384)
-            monoRight = padarray(monoRight,(144384-len));
+        elseif(len<samples)
+            monoRight = padarray(monoRight,(samples-len));
         end
         
         Stereo(:,1) = monoLeft(:,1);
-        Stereo(:,2) = monoRight(:,1);
-        
+        Stereo(:,2) = monoRight(:,2);
 
-        
-
-        name = strcat('EAD_HRIR/Audio/SubjectSweeps_Raw/',subjectNumber,'/',monoLeftdir(k).name);
+        name = strcat('Audio/',projectName,'/SubjectSweeps_Raw/',subjectNumber,'/',fsFolder,'/',monoLeftdir(k).name);
         audiowrite(name,Stereo,48000,'BitsPerSample', 24);
     end
 
